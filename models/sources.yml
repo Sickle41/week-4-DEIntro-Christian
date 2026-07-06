@@ -1,0 +1,28 @@
+version: 2
+
+# Day 2: declare the raw data as SOURCES.
+#
+# A source is dbt's name for a table that dbt did NOT build — data that arrived
+# from outside (here, scripts/load_raw.py put it in the `raw` schema). Declaring
+# it buys you three things:
+#   * models say {{ source('raw', 'orders') }} instead of hard-coding raw.orders,
+#     so the raw location lives in ONE place
+#   * sources appear in the lineage graph (green nodes in dbt docs)
+#   * you can attach tests to raw data — before your transforms ever touch it
+#
+# The `orders` table is declared for you as the worked example. Declare
+# `customers` yourself, then refactor orders_deduped to use source() instead of
+# the hard-coded raw.orders.
+#
+# Checkpoint:
+#   uv run dbt run            # still green, now via source()
+#   uv run dbt ls             # sources show up as source:week4.raw.*
+
+sources:
+  - name: raw
+    description: "Files loaded as-is by scripts/load_raw.py — the mess is intentional."
+    schema: raw
+    tables:
+      - name: orders
+        description: "Order events, re-ingested flakily: dup order_ids, money as text, three date formats."
+      # TODO (Day 2): declare the customers table here.

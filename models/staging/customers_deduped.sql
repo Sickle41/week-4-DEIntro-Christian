@@ -1,0 +1,20 @@
+-- Day 2: the dedup CTE gets promoted to a model.
+--
+-- In Week 2 the customer dedup (keep the highest record_version per
+-- customer_id) lived as a CTE buried INSIDE customer_order_summary. Nobody
+-- else could reuse it, and it showed up in no lineage. In dbt it becomes its
+-- own model: anything downstream can ref('customers_deduped') it, and it
+-- appears as a node in the DAG.
+--
+-- Lift that CTE out of your Week 2 customer_order_summary.sql and paste it
+-- here as a standalone SELECT:
+--   * one row per customer_id — the highest record_version wins
+--   * read from the raw customers source — source('raw', 'customers') in
+--     double curly braces, once you've declared it in models/sources.yml
+--
+-- Checkpoint:
+--   uv run dbt run --select customers_deduped
+--   uv run dbt show --select customers_deduped
+--
+-- Until you fill this in, the placeholder keeps `dbt run` green.
+select 'TODO: lift your Week 2 customer-dedup CTE into this model' as todo

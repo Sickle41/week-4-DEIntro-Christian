@@ -1,0 +1,28 @@
+-- Day 2: port your Week 2 customer_order_summary.sql here — it gets SIMPLER.
+--
+-- The dedup CTE is gone (it's the customers_deduped model now), so this model
+-- is just the join + aggregate:
+--
+--   * one row per customer: customer_id, name, order_count, total_revenue
+--   * FROM {{ ref('clean_orders') }} joined to {{ ref('customers_deduped') }}
+--   * GROUP BY customer; count orders, sum line_total
+--   * keep customers with at least min_orders orders — but where Week 2 bound
+--     a parameter from Python ($min_orders), dbt uses a project variable:
+--
+--       HAVING count(*) >= {{ var('min_orders') }}
+--
+--     The default lives in dbt_project.yml. Override it per-run:
+--       uv run dbt run --select customer_order_summary --vars 'min_orders: 5'
+--
+-- Don't forget the Week 2 NULL trap: orders with a NULL customer_id vanish
+-- from an inner join. Decide what happens to them — deliberately.
+--
+-- This is a mart (see dbt_project.yml) so dbt builds it as a TABLE, not a view:
+-- it's the thing people query, so it should be fast and precomputed.
+--
+-- Checkpoint:
+--   uv run dbt run
+--   uv run dbt show --select customer_order_summary
+--
+-- Until you fill this in, the placeholder keeps `dbt run` green.
+select 'TODO: port your Week 2 customer_order_summary SQL here' as todo

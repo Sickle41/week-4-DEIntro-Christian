@@ -1,0 +1,67 @@
+version: 2
+
+# Day 3: tests + docs.
+#
+# In Week 2, pytest asserted things about your CODE. dbt tests assert things
+# about your DATA — every `dbt test` compiles each entry below into a SQL query
+# that returns violating rows; any rows back = FAIL. Tests are the contract
+# each model promises to everything downstream of it.
+#
+# Everything here starts commented out so Days 1-2 stay green. On Day 3:
+#
+#   1. Uncomment `models:` and the orders_deduped block — that's the worked
+#      example. Run:
+#        uv run dbt test
+#   2. Write tests for the other three models where the TODOs are, and
+#      uncomment those blocks too.
+#   3. BREAK one on purpose (see README Day 3) and read what dbt tells you —
+#      including the compiled test SQL under target/compiled/.
+#
+# The descriptions matter too: they surface in the docs site (Day 3), which is
+# where "who sees this data?" starts being answerable.
+
+# models:
+#   - name: orders_deduped
+#     description: "One row per order_id — the newest copy by updated_at. Raw mess in, unique keys out."
+#     columns:
+#       - name: order_id
+#         description: "Primary key. If unique fails, the dedup regressed."
+#         data_tests:
+#           - not_null
+#           - unique
+#
+#   - name: customers_deduped
+#     description: "One row per customer_id — highest record_version wins."
+#     columns:
+#       - name: customer_id
+#         data_tests:
+#           # TODO (Day 3): what must ALWAYS be true of this column? Same story
+#           # as order_id above.
+#
+#   - name: clean_orders
+#     description: "Typed, normalized orders. Money is numeric, dates are DATEs, status is lowercase."
+#     columns:
+#       - name: order_id
+#         data_tests:
+#           # TODO (Day 3): dedup happened upstream — should still be provable here.
+#       - name: status
+#         data_tests:
+#           # TODO (Day 3): you normalized status to a small set of values.
+#           # Look up `accepted_values` in the dbt docs and pin that set here.
+#           # Heads up: tests that take options nest them under `arguments:` —
+#           # older tutorials skip that level and dbt now warns about it.
+#       - name: customer_id
+#         data_tests:
+#           # TODO (Day 3): every non-NULL customer_id should exist in
+#           # customers_deduped. Look up the `relationships` test (its `to:` and
+#           # `field:` also go under `arguments:`). Note that it IGNORES NULLs —
+#           # so the Week 2 NULL-join-key orders still pass. Think about why
+#           # that's the right default.
+#
+#   - name: customer_order_summary
+#     description: "One row per customer with order_count and total_revenue. The thing people actually query."
+#     columns:
+#       - name: customer_id
+#         data_tests:
+#           # TODO (Day 3): if this key ever duplicates, every dashboard on top
+#           # of this mart double-counts. Prove it can't.

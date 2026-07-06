@@ -1,0 +1,21 @@
+-- Day 1: your FIRST dbt model — port your Week 2 orders_deduped.sql here.
+--
+-- Paste the SQL you wrote in Week 2, with exactly two changes:
+--
+--   1. NO CREATE TABLE / DROP TABLE. A dbt model is JUST a SELECT. dbt names
+--      the object after this file (orders_deduped) and decides how to build it
+--      from dbt_project.yml (staging models -> views). Delete any DDL.
+--   2. The raw table lives at raw.orders now, so:  FROM raw.orders
+--      (Tomorrow you'll replace even that with source() — for today,
+--      hard-coding the name is fine.)
+--
+-- Same logic as Week 2: exactly one row per order_id — the newest copy by
+-- updated_at — keeping all the original columns. CTE + ROW_NUMBER()
+-- OVER (PARTITION BY order_id ORDER BY updated_at DESC).
+--
+-- Checkpoint:
+--   uv run dbt run
+--   uv run dbt show --select orders_deduped
+--
+-- Until you fill this in, the placeholder keeps `dbt run` green.
+select 'TODO: port your Week 2 orders_deduped SQL here' as todo
