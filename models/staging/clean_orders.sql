@@ -1,23 +1,33 @@
--- Day 2: port your Week 2 clean_orders.sql here.
---
--- Same cleaning as Week 2, reading from the model you built yesterday:
---   FROM {{ ref('orders_deduped') }}     <- NOT the raw table, NOT a hard-coded name
---
---   * cast price text ("$1,209.50", "  42.99 ") to a number — strip $, comma, spaces
---   * cast quantity to an integer
---   * DROP rows missing a usable quantity or price
---   * normalize status: lower-case, trimmed, blanks -> 'unknown'
---   * parse order_date into a real DATE — all three formats
---     (COALESCE over your TRY_STRPTIME attempts, exactly like Week 2 Day 3)
---   * add line_total = quantity * price
---
--- ref() is the whole trick: dbt now KNOWS clean_orders depends on
--- orders_deduped, builds them in order, and draws the edge in the DAG. After
--- `dbt compile`, look at target/compiled/.../clean_orders.sql and see what
--- the ref() turned into.
---
--- Checkpoint:
---   uv run dbt run --select clean_orders
---
--- Until you fill this in, the placeholder keeps `dbt run` green.
-select 'TODO: port your Week 2 clean_orders SQL here' as todo
+-- Build clean_orders from orders_deduped: cast money/quantity, parse dates
+-- (all three formats), normalize status, drop unusable rows, add line_total.
+CREATE OR REPLACE TABLE clean_orders AS
+WITH parsed AS (
+    SELECT
+        order_id,
+        customer_id,
+        sku,
+        quantity,
+        TRY_CAST(
+            REPLACE(REPLACE(TRIM(price), '$', ''), ',', '') AS DOUBLE
+        ) AS price,
+        COALESCE(NULLIF(LOWER(TRIM(status)), ''), 'unknown') AS status,
+        COALESCE(
+            TRY_STRPTIME(order_date, '%d-%b-%Y'),
+            TRY_STRPTIME(order_date, '%Y-%m-%d'),
+            TRY_STRPTIME(order_date, '%m/%d/%Y')
+        )::DATE AS order_date,
+        updated_at
+    FROM orders_deduped
+)
+SELECT
+    order_id,
+    customer_id,
+    sku,
+    quantity,
+    price,
+    status,
+    order_date,
+    updated_at,
+    quantity * price AS line_total
+FROM parsed
+WHERE quantity IS NOT NULL AND price IS NOT NULL
