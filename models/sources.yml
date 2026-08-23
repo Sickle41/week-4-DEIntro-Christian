@@ -25,4 +25,5 @@ sources:
     tables:
       - name: orders
         description: "Order events, re-ingested flakily: dup order_ids, money as text, three date formats."
-      # TODO (Day 2): declare the customers table here.
+      - name: customers
+        description: "Customer records, re-ingested flakily: dup customer_ids at different record_versions."

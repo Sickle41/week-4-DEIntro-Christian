@@ -7,7 +7,7 @@ WITH ranked AS (
             PARTITION BY order_id
             ORDER BY updated_at DESC
         ) AS row_num
-    FROM raw.orders
+    FROM {{ source('raw', 'orders') }}
 )
 SELECT * EXCLUDE (row_num)
 FROM ranked
