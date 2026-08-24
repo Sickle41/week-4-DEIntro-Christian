@@ -1,6 +1,5 @@
 -- Build clean_orders from orders_deduped: cast money/quantity, parse dates
 -- (all three formats), normalize status, drop unusable rows, add line_total.
-CREATE OR REPLACE TABLE clean_orders AS
 WITH parsed AS (
     SELECT
         order_id,
@@ -17,7 +16,7 @@ WITH parsed AS (
             TRY_STRPTIME(order_date, '%m/%d/%Y')
         )::DATE AS order_date,
         updated_at
-    FROM orders_deduped
+    FROM {{ ref('orders_deduped') }}
 )
 SELECT
     order_id,
