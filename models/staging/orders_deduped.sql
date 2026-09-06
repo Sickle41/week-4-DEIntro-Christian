@@ -11,4 +11,4 @@ WITH ranked AS (
 )
 SELECT * EXCLUDE (row_num)
 FROM ranked
--- WHERE row_num = 1
+WHERE row_num = 1
